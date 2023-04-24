@@ -64,7 +64,7 @@ uint16_t default_encoder_map[LAYERS][ENCODER_SIZE] = {
 	// |Y+|Y-| LEFT CLICK|
 	{MOUSE_ENCODER, KC_MS_UP, KC_MS_DOWN, KC_MS_BTN1},
 
-	{MOUSE_ENCODER, KC_MS_UP, KC_MS_DOWN, KC_MS_BTN1}};
+	{MOUSE_ENCODER, KC_MS_RIGHT, KC_MS_LEFT, KC_MS_BTN1}};
 
 uint16_t default_slave_encoder_map[LAYERS][ENCODER_SIZE] = {
 	// |VOL + | VOL - | MUTE |

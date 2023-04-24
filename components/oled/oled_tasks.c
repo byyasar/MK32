@@ -78,9 +78,9 @@ void update_oled(void) {
 #endif
 
 	if (xQueueReceive(layer_recieve_q, &curr_layout, (TickType_t) 0)) {
-		erase_area(0, 7, 45, 7);
-		u8g2_SetFont(&u8g2, u8g2_font_5x7_tf);
-		u8g2_DrawStr(&u8g2, 0, 14, layer_names_arr[curr_layout]);
+		erase_area(0, 7,127,20);
+		u8g2_SetFont(&u8g2, u8g2_font_8x13_tr);
+		u8g2_DrawStr(&u8g2, 0, 16, layer_names_arr[curr_layout]);
 		u8g2_SendBuffer(&u8g2);
 	}
 	if (xQueueReceive(led_recieve_q, &current_led, (TickType_t) 0)) {
@@ -134,13 +134,22 @@ void update_oled(void) {
 	}
 }
 
+/*NOTE - 
+erase_area(0, 7,127,20);
+		u8g2_SetFont(&u8g2, u8g2_font_8x13_tr);
+		u8g2_DrawStr(&u8g2, 0, 16, layer_names_arr[curr_layout]);
+		u8g2_SendBuffer(&u8g2);
+
+*/
+
 //oled on connection
 void ble_connected_oled(void) {
 
 	u8g2_ClearBuffer(&u8g2);
 	u8g2_SetFont(&u8g2, u8g2_font_5x7_tf);
 	u8g2_DrawStr(&u8g2, 0, 6, GATTS_TAG);
-	u8g2_DrawStr(&u8g2, 0, 14, layer_names_arr[current_layout]);
+	u8g2_SetFont(&u8g2, u8g2_font_8x13_tr);
+	u8g2_DrawStr(&u8g2, 0, 16, layer_names_arr[current_layout]);
 	u8g2_SetFont(&u8g2, u8g2_font_open_iconic_all_1x_t);
 	u8g2_DrawGlyph(&u8g2, 110 + offset_x_batt , 8 + offset_y_batt, BATT_ICON);
 	u8g2_DrawGlyph(&u8g2, 120 + offset_x_batt, 8 + offset_y_batt , BT_ICON);
