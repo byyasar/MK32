@@ -81,7 +81,7 @@ extern "C" void oled_task(void *pvParameters) {
 		if (halBLEIsConnected() == 0) {
 			if (CON_LOG_FLAG == false) {
 				ESP_LOGI(KEY_REPORT_TAG,
-						"Not connected, waiting for connection ");
+						"Baglanamadi,Bekleyiniz ");
 			}
 			waiting_oled();
 			DEEP_SLEEP = false;
