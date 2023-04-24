@@ -177,6 +177,8 @@ uint8_t *check_key_state(uint16_t **keymap) {
 
 				uint16_t report_index = (2 + col + row * KEYMAP_COLS);
 				keycode = keymap[row][col];
+				ESP_LOGI(KEY_PRESS_TAG, " keycode!, Current layer: %d ",
+					keycode);
 
 				//checking if the keycode is transparent
 				if (keycode == KC_TRNS) {
@@ -255,7 +257,6 @@ uint8_t *check_key_state(uint16_t **keymap) {
 					}
 				}
 				if (matrix_state[row][col - MATRIX_COLS * pad] == 0) {
-
 					//checking for layer hold release
 					if ((layouts[prev_layout][row][col] >= LAYER_HOLD_BASE_VAL)
 							&& (keycode <= LAYER_HOLD_MAX_VAL)
