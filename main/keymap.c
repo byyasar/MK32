@@ -8,7 +8,7 @@
 
 // A bit different from QMK, default returns you to the first layer, LOWER and raise increase/lower layer by order.
 #define DEFAULT 0x100
-#define LOWER 0x101
+#define WINMAC 0x101
 #define RAISE 0x102
 
 // Keymaps are designed to be relatively interchangeable with QMK
@@ -104,7 +104,7 @@ uint16_t _QWERTY[MATRIX_ROWS][KEYMAP_COLS] = {
 	 {KC_LCTRL,KC_LGUI, KC_LALT, KC_SPC, KC_SPC,  NUM_H,  KC_DEL,  NUM,   LOWER, KC_BSPC, KC_ENT,  KC_LEFT },
 	 {DEFAULT,RAISE, KC_NONE, KC_NONE, KC_NONE,   KC_NONE,  KC_RIGHT,  KC_DOWN,   KC_NONE, KC_NONE, KC_NONE,   KC_NONE }*/
 	{RAISE, KC_AUDIO_VOL_DOWN, KC_AUDIO_VOL_UP, KC_AUDIO_MUTE},
-	{KC_X, KC_C, KC_V, KC_B},
+	{WINMAC, KC_C, KC_V, KC_B},
 	{KC_1, KC_2, KC_3, KC_4},
 	{KC_TAB, KC_A, KC_S, KC_D}
 
@@ -137,7 +137,7 @@ uint16_t _NUM[MATRIX_ROWS][KEYMAP_COLS] = {
 
 	*/
 	{RAISE, KC_AUDIO_VOL_DOWN, KC_AUDIO_VOL_UP, KC_AUDIO_MUTE},
-	{KC_X, KC_C, KC_V, KC_B},
+	{WINMAC, KC_C, KC_V, KC_B},
 	{KC_1, KC_2, KC_3, KC_4},
 	{KC_TAB, KC_A, KC_S, KC_D}};
 
@@ -165,7 +165,7 @@ uint16_t _PLUGINS[MATRIX_ROWS][KEYMAP_COLS] = {
 	 {KC_LCTRL,KC_LGUI, KC_LALT, KC_SPC, KC_SPC,  NUM_H,  KC_DEL,  NUM,   LOWER, KC_BSPC, KC_ENT,  KC_LEFT },
 	 {DEFAULT,RAISE, KC_NONE, KC_NONE, KC_NONE,   KC_NONE,  KC_RIGHT,  KC_DOWN,   KC_NONE, KC_NONE, KC_NONE,   KC_NONE }*/
 	{RAISE, KC_AUDIO_VOL_DOWN, KC_AUDIO_VOL_UP, KC_AUDIO_MUTE},
-	{KC_X, KC_C, KC_V, KC_B},
+	{WINMAC, KC_C, KC_V, KC_B},
 	{KC_1, KC_2, KC_3, KC_4},
 	{KC_TAB, KC_A, KC_S, KC_D}
 
@@ -175,5 +175,5 @@ uint16_t (*default_layouts[])[MATRIX_ROWS][KEYMAP_COLS] = {&_QWERTY, &_NUM,
 														   &_PLUGINS};
 
 uint8_t current_layout = 0;
-
+uint8_t current_operationsystem = 0; //0 win 1 mac
 #endif
