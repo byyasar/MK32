@@ -58,6 +58,8 @@ extern QueueHandle_t layer_recieve_q;
  **/
 extern QueueHandle_t led_recieve_q;
 
+extern QueueHandle_t cur_opsystem_q;
+
 #ifdef __cplusplus
 }
 #endif

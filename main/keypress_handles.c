@@ -163,6 +163,8 @@ void layer_adjust(uint16_t keycode)
 			}
 #ifdef OLED_ENABLE
 			xQueueSend(layer_recieve_q, &current_layout, (TickType_t)0);
+			xQueueSend(cur_opsystem_q, &current_operationsystem, (TickType_t)0);
+
 #endif
 			ESP_LOGI(KEY_PRESS_TAG, "Layer modified!, Current layer: %d ",
 					 current_layout);
