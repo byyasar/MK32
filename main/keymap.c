@@ -10,6 +10,7 @@
 #define DEFAULT 0x100
 #define WINMAC 0x101
 #define RAISE 0x102
+#define MOUSEMODE 0xDF
 
 // Keymaps are designed to be relatively interchangeable with QMK
 enum custom_keycodes
@@ -41,8 +42,7 @@ char default_layout_names[LAYERS][MAX_LAYOUT_NAME_LENGTH] = {
 #define MACROS_NUM 2
 enum custom_macros
 {
-	KC_CTRL_ALT_DELETE = MACRO_BASE_VAL,
-	KC_ALT_F4,
+	KC_CTRL_ALT_DELETE = MACRO_BASE_VAL,KC_ALT_F4,FUSIONZOOM
 };
 
 /*define what the macros do
@@ -103,8 +103,8 @@ uint16_t _QWERTY[MATRIX_ROWS][KEYMAP_COLS] = {
 	 {KC_LSFT, KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, KC_UP } ,
 	 {KC_LCTRL,KC_LGUI, KC_LALT, KC_SPC, KC_SPC,  NUM_H,  KC_DEL,  NUM,   LOWER, KC_BSPC, KC_ENT,  KC_LEFT },
 	 {DEFAULT,RAISE, KC_NONE, KC_NONE, KC_NONE,   KC_NONE,  KC_RIGHT,  KC_DOWN,   KC_NONE, KC_NONE, KC_NONE,   KC_NONE }*/
-	{RAISE, KC_AUDIO_VOL_DOWN, KC_AUDIO_VOL_UP, KC_AUDIO_MUTE},
-	{WINMAC, KC_C, KC_V, KC_B},
+	{RAISE, KC_AUDIO_VOL_DOWN, KC_AUDIO_VOL_UP, FUSIONZOOM},
+	{WINMAC, KC_C, KC_V, MOUSEMODE},
 	{KC_1, KC_2, KC_3, KC_4},
 	{KC_TAB, KC_A, KC_S, KC_D}
 
@@ -137,7 +137,7 @@ uint16_t _NUM[MATRIX_ROWS][KEYMAP_COLS] = {
 
 	*/
 	{RAISE, KC_AUDIO_VOL_DOWN, KC_AUDIO_VOL_UP, KC_AUDIO_MUTE},
-	{WINMAC, KC_C, KC_V, KC_B},
+	{WINMAC, KC_C, KC_V, MOUSEMODE},
 	{KC_1, KC_2, KC_3, KC_4},
 	{KC_TAB, KC_A, KC_S, KC_D}};
 
@@ -176,4 +176,6 @@ uint16_t (*default_layouts[])[MATRIX_ROWS][KEYMAP_COLS] = {&_QWERTY, &_NUM,
 
 uint8_t current_layout = 0;
 uint8_t current_operationsystem = 0; //0 win 1 mac
+uint8_t current_mouseMode     = 1; // 1-SCROLL 2-LEFT-RİGHT 3- UP-DOWN
+uint8_t current_fusion360Mode = 1; // 1-zoom 2-pan
 #endif

@@ -47,6 +47,8 @@ uint8_t prev_led = 0;
 QueueHandle_t layer_recieve_q;
 QueueHandle_t led_recieve_q;
 QueueHandle_t cur_opsystem_q;
+QueueHandle_t mouseMode_q;
+QueueHandle_t fusion360Mode_q;
 
 uint32_t battery_percent = 0;
 uint32_t prev_battery_percent = 0;
@@ -54,6 +56,9 @@ uint32_t prev_battery_percent = 0;
 uint8_t curr_layout = 0;
 uint8_t curr_operation_system = 0;
 uint8_t current_led = 0;
+uint8_t current_mouse_mod = 1;
+uint8_t mouseMode = 1;	   // 1-SCROLL 2-LEFT-RİGHT 3- UP-DOWN
+uint8_t fusion360Mode = 1; // 1-zoom 2-pan
 
 int BATT_FLAG = 0;
 int DROP_H = 0;
@@ -80,99 +85,53 @@ void update_oled(void)
 	battery_percent = get_battery_level();
 #endif
 
-	if (xQueueReceive(layer_recieve_q, &curr_layout, (TickType_t)0) || xQueueReceive(cur_opsystem_q, &curr_operation_system, (TickType_t)0))
+	/*if (xQueueReceive(mouseMode_q, &current_mouse_mod, (TickType_t)0) && curr_layout == 1)
 	{
 		erase_area(0, 0, 128, 32);
+		u8g2_DrawRFrame(&u8g2, 0, 0, 128, 8, 3);
+		current_mouse_mod == 1 ? u8g2_DrawStr(&u8g2, 0, 7, " Scroll ") : u8g2_DrawStr(&u8g2, 0, 7, " Left ");
+	}*/
+
+	if (xQueueReceive(layer_recieve_q, &curr_layout, (TickType_t)0) || xQueueReceive(cur_opsystem_q, &curr_operation_system, (TickType_t)0)||xQueueReceive(mouseMode_q, &current_mouse_mod, (TickType_t)0))
+	{
+		erase_area(0, 0, 128, 32);
+		u8g2_DrawRFrame(&u8g2, 0, 0, 128, 8, 3);
 		curr_operation_system == 0 ? u8g2_DrawStr(&u8g2, 0, 7, " Win ") : u8g2_DrawStr(&u8g2, 0, 7, " Mac ");
+		current_mouse_mod == 0 ? u8g2_DrawStr(&u8g2, 0, 14, " Scr ") : u8g2_DrawStr(&u8g2, 0,14, " L-R ");
 		if (curr_layout == 0)
 		{
+
 			u8g2_DrawStr(&u8g2, 50, 7, " Ana Menu ");
-			u8g2_DrawStr(&u8g2, 0, 14, " Ent | Esc |-> V- x V+ ");
-			u8g2_DrawStr(&u8g2, 0, 21, "  1  |  2  |  3  | WxM |");
-			u8g2_DrawStr(&u8g2, 0, 28, " Tab |  6  |  7  | Slp |");
+			u8g2_DrawStr(&u8g2, 0, 15, " Ent | Esc |-> V- x V+ ");
+			u8g2_DrawStr(&u8g2, 0, 22, "  1  |  2  |  3  | WxM |");
+			u8g2_DrawStr(&u8g2, 0, 29, " Tab |  6  |  7  | Slp |");
 		}
-		else if (curr_layout == 1)
+		else if (curr_layout == 1) /*|| xQueueReceive(mouseMode_q, &current_mouse_mod, (TickType_t)0)*/
 		{
 			u8g2_DrawStr(&u8g2, 50, 7, " Fusion 360 ");
-			u8g2_DrawStr(&u8g2, 0, 14, " Mod | Esc | -> Scroll");
-			u8g2_DrawStr(&u8g2, 0, 21, " Zom | Rot | Pan |  4  |");
-			u8g2_DrawStr(&u8g2, 0, 28, " Tab |  6  |  7  |  8  |");
+			current_mouse_mod == 1 ? u8g2_DrawStr(&u8g2, 0, 15, " Mod | Esc | -> Scroll") : (current_mouse_mod == 2 ? u8g2_DrawStr(&u8g2, 0, 15, " Mod | Esc | ->Sol xSag") : u8g2_DrawStr(&u8g2, 0, 15, " Mod | Esc |->Asg xYuk"));
+			u8g2_DrawStr(&u8g2, 0, 15, " Mod | Esc | -> Scroll");
+			u8g2_DrawStr(&u8g2, 0, 22, " Zom | Rot | Pan | Mov |");
+			u8g2_DrawStr(&u8g2, 0, 29, " Tab |  6  |  7  |  8  |");
+		}
+		else if (curr_layout == 2)
+		{
+			u8g2_DrawStr(&u8g2, 50, 7, " Youtube ");
+			u8g2_DrawStr(&u8g2, 0, 15, " Ply | Esc |->Ileri-Geri ");
+			u8g2_DrawStr(&u8g2, 0, 22, " FlS |  2  |  3  | V+  |");
+			u8g2_DrawStr(&u8g2, 0, 29, " Tab |  6  |  7  | V-  |");
 		}
 		else
 		{
-			u8g2_DrawStr(&u8g2, 50, 7, " Youtube ");
-			u8g2_DrawStr(&u8g2, 0, 14, " Ent | Esc |-> V- x V+ ");
-			u8g2_DrawStr(&u8g2, 0, 21, "  1  |  2  |  3  | WxM |");
-			u8g2_DrawStr(&u8g2, 0, 28, " Tab |  6  |  7  | Slp |");
+			u8g2_DrawStr(&u8g2, 50, 7, " OBS ");
+			u8g2_DrawStr(&u8g2, 0, 15, " Ply | Esc |-> V- x V+ ");
+			u8g2_DrawStr(&u8g2, 0, 22, "  1  | Rec | Pau | Stp |");
+			u8g2_DrawStr(&u8g2, 0, 29, " Tab | Mic | Cam | Scn |");
 		}
 
 		u8g2_SendBuffer(&u8g2);
 	}
-
-	/*if (xQueueReceive(layer_recieve_q, &curr_layout, (TickType_t) 0)) {
-		erase_area(0, 7,127,20);
-		u8g2_SetFont(&u8g2, u8g2_font_8x13_tr);
-		u8g2_DrawStr(&u8g2, 0, 16, layer_names_arr[curr_layout]);
-				u8g2_SendBuffer(&u8g2);
-	}
-	if (xQueueReceive(led_recieve_q, &current_led, (TickType_t) 0)) {
-		erase_area(0, 24, 127, 8);
-		if (CHECK_BIT(current_led,0) != 0) {
-			u8g2_SetFont(&u8g2, u8g2_font_5x7_tf);
-			u8g2_DrawStr(&u8g2, 0, 31, "NUM");
-			u8g2_SetFont(&u8g2, u8g2_font_open_iconic_all_1x_t);
-			u8g2_DrawGlyph(&u8g2, 16, 32, LOCK_ICON);
-		}
-
-		if (CHECK_BIT(current_led,1) != 0) {
-			u8g2_SetFont(&u8g2, u8g2_font_5x7_tf);
-			u8g2_DrawStr(&u8g2, 27, 31, "CAPS");
-			u8g2_SetFont(&u8g2, u8g2_font_open_iconic_all_1x_t);
-			u8g2_DrawGlyph(&u8g2, 48, 32, LOCK_ICON);
-		}
-		if (CHECK_BIT(current_led,2) != 0) {
-			u8g2_SetFont(&u8g2, u8g2_font_5x7_tf);
-			u8g2_DrawStr(&u8g2, 57, 31, "SCROLL");
-			u8g2_SetFont(&u8g2, u8g2_font_open_iconic_all_1x_t);
-			u8g2_DrawGlyph(&u8g2, 88, 32, LOCK_ICON);
-		}
-		u8g2_SendBuffer(&u8g2);
-	}
-
-	if (battery_percent != prev_battery_percent) {
-		u8g2_SetFont(&u8g2, u8g2_font_5x7_tf);
-		char buf[sizeof(uint32_t)];
-		snprintf(buf, sizeof(uint32_t), "%d", battery_percent);
-		u8g2_DrawStr(&u8g2, 103 + offset_x_batt , 7 + offset_y_batt, "%");
-		if ((battery_percent < 100)
-				&& (abs(battery_percent - prev_battery_percent) >= 2)) {
-			erase_area(85 + offset_x_batt , 0 + offset_y_batt, 15, 7);
-			u8g2_DrawStr(&u8g2, 90 + offset_x_batt , 7 + offset_y_batt, buf);
-			u8g2_SendBuffer(&u8g2);
-		}
-		if ((battery_percent > 100) && (BATT_FLAG = 0)) {
-			erase_area(85  + offset_x_batt, 0 + offset_y_batt, 15, 7);
-			u8g2_DrawStr(&u8g2, 85 + offset_x_batt, 7 + offset_y_batt, "100");
-			BATT_FLAG = 1;
-			u8g2_SendBuffer(&u8g2);
-		}
-		if (battery_percent == 100) {
-			erase_area(85 + offset_x_batt , 0 + offset_y_batt, 15, 7);
-			u8g2_DrawStr(&u8g2, 85 + offset_x_batt, 7 + offset_y_batt , "100");
-			u8g2_SendBuffer(&u8g2);
-		}
-		prev_battery_percent = battery_percent;
-
-	}*/
 }
-
-/*NOTE -
-erase_area(0, 7,127,20);
-		u8g2_SetFont(&u8g2, u8g2_font_8x13_tr);
-		u8g2_DrawStr(&u8g2, 0, 16, layer_names_arr[curr_layout]);
-		u8g2_SendBuffer(&u8g2);
-
-*/
 
 // oled on connection
 void ble_connected_oled(void)
@@ -180,12 +139,12 @@ void ble_connected_oled(void)
 
 	u8g2_ClearBuffer(&u8g2);
 	u8g2_SetFont(&u8g2, u8g2_font_5x7_tf);
-	// u8g2_DrawStr(&u8g2, 0, 6, GATTS_TAG);
-	// u8g2_SetFont(&u8g2, u8g2_font_8x13_tr);
-	curr_operation_system == 0 ? u8g2_DrawStr(&u8g2, 0, 7, " Win        Ana Menu ") : u8g2_DrawStr(&u8g2, 0, 7, " Mac        Ana Menu ");
-	u8g2_DrawStr(&u8g2, 0, 14, " Ent | Esc |-> V- x V+ ");
-	u8g2_DrawStr(&u8g2, 0, 21, "  1  |  2  |  3  | WxM |");
-	u8g2_DrawStr(&u8g2, 0, 28, " Tab |  6  |  7  | Slp |");
+	u8g2_DrawRFrame(&u8g2, 0, 0, 128, 8, 3);
+	curr_operation_system == 0 ? u8g2_DrawStr(&u8g2, 0, 7, " Win ") : u8g2_DrawStr(&u8g2, 0, 7, " Mac ");
+	u8g2_DrawStr(&u8g2, 50, 7, " Ana Menu ");
+	u8g2_DrawStr(&u8g2, 0, 15, " Ent | Esc |-> V- x V+ ");
+	u8g2_DrawStr(&u8g2, 0, 22, "  1  |  2  |  3  | WxM |");
+	u8g2_DrawStr(&u8g2, 0, 29, " Tab |  6  |  7  | Slp |");
 
 	// u8g2_DrawStr(&u8g2, 0, 16, layer_names_arr[current_layout]);
 
@@ -340,7 +299,8 @@ void init_oled(const u8g2_cb_t *rotation)
 
 	layer_recieve_q = xQueueCreate(32, sizeof(uint8_t));
 	led_recieve_q = xQueueCreate(32, sizeof(uint8_t));
-	cur_opsystem_q = xQueueCreate(32, sizeof(uint8_t));
+	cur_opsystem_q = xQueueCreate(32, sizeof(uint8_t)); 
+	mouseMode_q = xQueueCreate(32, sizeof(uint8_t)); //mouseMode_q
 
 	ESP_LOGI(TAG, "Setting up oled");
 

@@ -60,6 +60,9 @@ extern QueueHandle_t led_recieve_q;
 
 extern QueueHandle_t cur_opsystem_q;
 
+extern QueueHandle_t mouseMode_q;
+extern QueueHandle_t fusion360Mode_q;
+
 #ifdef __cplusplus
 }
 #endif

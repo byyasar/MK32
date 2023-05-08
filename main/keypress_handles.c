@@ -151,7 +151,12 @@ void layer_adjust(uint16_t keycode)
 				current_operationsystem++;
 				current_operationsystem = current_operationsystem % 2;
 				break;
-
+				
+			case FUSIONZOOM:
+				ESP_LOGI(KEY_PRESS_TAG, "ZOOM!, Current layer: %d ",
+					 current_layout);
+				break;
+			
 			case RAISE:
 				if (current_layout == MAX_LAYER)
 				{
@@ -164,12 +169,14 @@ void layer_adjust(uint16_t keycode)
 #ifdef OLED_ENABLE
 			xQueueSend(layer_recieve_q, &current_layout, (TickType_t)0);
 			xQueueSend(cur_opsystem_q, &current_operationsystem, (TickType_t)0);
+			// xQueueSend(mouseMode_q, &current_mouseMode, (TickType_t)0);
 
 #endif
 			ESP_LOGI(KEY_PRESS_TAG, "Layer modified!, Current layer: %d ",
 					 current_layout);
 			ESP_LOGI(KEY_PRESS_TAG, "Operationsystem modified!, op: %d ",
 					 current_operationsystem);
+			ESP_LOGI(KEY_PRESS_TAG, "mouse modified!, mouseMode: %d ", current_mouseMode);
 		}
 	}
 	prev_time = cur_time;
@@ -199,8 +206,18 @@ uint8_t *check_key_state(uint16_t **keymap)
 
 				uint16_t report_index = (2 + col + row * KEYMAP_COLS);
 				keycode = keymap[row][col];
-				ESP_LOGI(KEY_PRESS_TAG, " keycode!, Current layer: %d ",
-						 keycode);
+				ESP_LOGI(KEY_PRESS_TAG, " keycode!, 1-Current layer: %d ", keycode);
+
+				if (keycode == 223) // mousemod
+				{
+					current_mouseMode++;
+					current_mouseMode = current_mouseMode % 4;
+					current_mouseMode == 0 ? current_mouseMode++ : current_mouseMode;
+					ESP_LOGI(KEY_PRESS_TAG, " current_mouseMode!, : %d ", current_mouseMode);
+#ifdef OLED_ENABLE
+					xQueueSend(mouseMode_q, &current_mouseMode, (TickType_t)0);
+#endif
+				}
 
 				// checking if the keycode is transparent
 				if (keycode == KC_TRNS)
@@ -239,7 +256,7 @@ uint8_t *check_key_state(uint16_t **keymap)
 									   (TickType_t)0);
 #endif
 							ESP_LOGI(KEY_PRESS_TAG,
-									 "Layer modified!, Current layer: %d ",
+									 "Layer modified!, 2- Current layer: %d ",
 									 current_layout);
 						}
 
@@ -296,7 +313,7 @@ uint8_t *check_key_state(uint16_t **keymap)
 								   (TickType_t)0);
 #endif
 						ESP_LOGI(KEY_PRESS_TAG,
-								 "Layer modified!, Current layer: %d ",
+								 "Layer modified!, 3-Current layer: %d ",
 								 current_layout);
 					}
 
